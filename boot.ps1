@@ -57,8 +57,8 @@ function GetLatestWinGet {
                 Start-BitsTransfer -Source $fileUri -Destination $filePath -ErrorAction Stop
             }
             catch {
-                Write-Warning "BITS transfer failed, falling back to Invoke-WebRequest: $_"
-                Invoke-WebRequest -Uri $fileUri -OutFile $filePath
+                Write-Warning "BITS transfer failed for $filePath, falling back to Invoke-WebRequest"
+                Invoke-WebRequest -Uri $fileUri -OutFile $filePath -ErrorAction Stop
             }
         }
 
