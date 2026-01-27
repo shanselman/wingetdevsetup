@@ -53,7 +53,7 @@ function GetLatestWinGet {
             $filePath = $paths[$i]
             $fileUri = $uris[$i]
             Write-Host "Downloading: $filePath from $fileUri"
-            Invoke-WebRequest -Uri $fileUri -OutFile $filePath
+            Start-BitsTransfer -Source $fileUri -Destination $filePath
         }
 
         Write-Host "Installing WinGet and its dependencies..."
