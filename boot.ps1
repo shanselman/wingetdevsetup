@@ -39,7 +39,7 @@ function GetLatestWinGet {
     # Forcing WinGet to be up to date
     $isWinGetRecent = (winget -v).Trim('v').TrimEnd("-preview").split('.')
 
-    # Turn off progress bar to make Invoke-WebRequest fast
+    # Turn off progress bar for better performance
     $ProgressPreference = 'SilentlyContinue'
 
     if (!(([int]$isWinGetRecent[0] -gt 1) -or ([int]$isWinGetRecent[0] -ge 1 -and [int]$isWinGetRecent[1] -ge 6))) {
@@ -53,7 +53,13 @@ function GetLatestWinGet {
             $filePath = $paths[$i]
             $fileUri = $uris[$i]
             Write-Host "Downloading: $filePath from $fileUri"
-            Start-BitsTransfer -Source $fileUri -Destination $filePath
+            try {
+                Start-BitsTransfer -Source $fileUri -Destination $filePath -ErrorAction Stop
+            }
+            catch {
+                Write-Warning "BITS transfer failed, falling back to Invoke-WebRequest: $_"
+                Invoke-WebRequest -Uri $fileUri -OutFile $filePath
+            }
         }
 
         Write-Host "Installing WinGet and its dependencies..."
