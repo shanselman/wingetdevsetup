@@ -45,13 +45,13 @@ function GetLatestWinGet {
     # Install NuGet provider and WinGet Client module
     try {
         Write-Host "Installing NuGet package provider..."
-        Install-PackageProvider -Name NuGet -Force -ErrorAction Stop | Out-Null
+        Install-PackageProvider -Name NuGet -Force -ErrorAction Stop -WarningAction SilentlyContinue
         
         Write-Host "Installing Microsoft.WinGet.Client module..."
-        Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery -ErrorAction Stop | Out-Null
+        Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery -ErrorAction Stop -WarningAction SilentlyContinue
         
         Write-Host "Repairing WinGet Package Manager..."
-        Repair-WinGetPackageManager -Force -Latest
+        Repair-WinGetPackageManager -Force -Latest -ErrorAction Stop
         
         Write-Host "WinGet is ready"
     }
