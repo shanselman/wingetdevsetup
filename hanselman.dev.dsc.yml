@@ -172,7 +172,7 @@ properties:
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: powershell
       directives:
-        description: Install PowerShell 7
+        description: Install PowerShell 7 (latest stable version)
         allowPrerelease: true
       settings:
         id: Microsoft.PowerShell
