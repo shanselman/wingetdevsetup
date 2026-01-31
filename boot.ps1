@@ -46,9 +46,11 @@ function GetLatestWinGet {
     try {
         Write-Host "Installing NuGet package provider..."
         Install-PackageProvider -Name NuGet -Force -ErrorAction Stop -WarningAction SilentlyContinue
+        Write-Host "NuGet package provider installed successfully"
         
         Write-Host "Installing Microsoft.WinGet.Client module..."
         Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery -ErrorAction Stop -WarningAction SilentlyContinue
+        Write-Host "Microsoft.WinGet.Client module installed successfully"
         
         Write-Host "Repairing WinGet Package Manager..."
         Repair-WinGetPackageManager -Force -Latest -ErrorAction Stop
@@ -56,7 +58,8 @@ function GetLatestWinGet {
         Write-Host "WinGet is ready"
     }
     catch {
-        Write-Warning "Failed to repair WinGet using module: $($_.Exception.Message)"
+        Write-Warning "Failed to repair WinGet using module approach"
+        Write-Warning "Error: $($_.Exception.Message)"
         Write-Host "Attempting manual installation..."
         
         # Fallback to manual installation
