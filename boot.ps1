@@ -2,14 +2,7 @@ $mainFunction = {
     $mypath = $MyInvocation.MyCommand.Path
     Write-Output "Path of the script: $mypath"
 
-    GetLatestWinGet
-
     $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-
-    $dscUri = "https://raw.githubusercontent.com/shanselman/wingetdevsetup/master/"
-    $dscDev = "hanselman.dev.dsc.yml"
-    $cacheBust = "?v=$(Get-Date -Format 'yyyyMMddHHmmss')"
-    $dscDevUri = $dscUri + $dscDev + $cacheBust
 
     if (!$isAdmin) {
         # Shoulder tap terminal so it gets registered moving forward
@@ -21,6 +14,14 @@ $mainFunction = {
         exit
     }
     else {
+        # Ensure WinGet is ready before running DSC configuration
+        GetLatestWinGet
+
+        $dscUri = "https://raw.githubusercontent.com/shanselman/wingetdevsetup/master/"
+        $dscDev = "hanselman.dev.dsc.yml"
+        $cacheBust = "?v=$(Get-Date -Format 'yyyyMMddHHmmss')"
+        $dscDevUri = $dscUri + $dscDev + $cacheBust
+
         Write-Host "Start: Scott Hanselman Dev Machine Setup"
         winget configuration -f $dscDevUri
         Write-Host "Done: Scott Hanselman Dev Machine Setup"
@@ -36,14 +37,32 @@ $mainFunction = {
 }
 
 function GetLatestWinGet {
-    # Forcing WinGet to be up to date
-    $isWinGetRecent = (winget -v).Trim('v').TrimEnd("-preview").split('.')
-
-    # Turn off progress bar to make Invoke-WebRequest fast
+    Write-Host "Ensuring WinGet is ready..."
+    
+    # Turn off progress bar for better performance
     $ProgressPreference = 'SilentlyContinue'
 
-    if (!(([int]$isWinGetRecent[0] -gt 1) -or ([int]$isWinGetRecent[0] -ge 1 -and [int]$isWinGetRecent[1] -ge 6))) {
-        # WinGet needs to be v1.6 or higher
+    # Install NuGet provider and WinGet Client module
+    try {
+        Write-Host "Installing NuGet package provider..."
+        Install-PackageProvider -Name NuGet -Force -ErrorAction Stop -WarningAction SilentlyContinue
+        Write-Host "NuGet package provider installed successfully"
+        
+        Write-Host "Installing Microsoft.WinGet.Client module..."
+        Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery -ErrorAction Stop -WarningAction SilentlyContinue
+        Write-Host "Microsoft.WinGet.Client module installed successfully"
+        
+        Write-Host "Repairing WinGet Package Manager..."
+        Repair-WinGetPackageManager -Force -Latest -ErrorAction Stop
+        
+        Write-Host "WinGet is ready"
+    }
+    catch {
+        Write-Warning "Failed to repair WinGet using module approach"
+        Write-Warning "Error: $($_.Exception.Message)"
+        Write-Host "Attempting manual installation..."
+        
+        # Fallback to manual installation
         $paths = "Microsoft.VCLibs.x64.14.00.Desktop.appx", "Microsoft.UI.Xaml.2.8.x64.appx", "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
         $uris = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx", "https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx", "https://aka.ms/getwinget"
         
@@ -53,7 +72,13 @@ function GetLatestWinGet {
             $filePath = $paths[$i]
             $fileUri = $uris[$i]
             Write-Host "Downloading: $filePath from $fileUri"
-            Invoke-WebRequest -Uri $fileUri -OutFile $filePath
+            try {
+                Start-BitsTransfer -Source $fileUri -Destination $filePath -ErrorAction Stop
+            }
+            catch {
+                Write-Warning "BITS transfer failed for $filePath, falling back to Invoke-WebRequest"
+                Invoke-WebRequest -Uri $fileUri -OutFile $filePath -ErrorAction Stop
+            }
         }
 
         Write-Host "Installing WinGet and its dependencies..."
@@ -76,9 +101,6 @@ function GetLatestWinGet {
                 Write-Error "Path doesn't exist: $filePath"
             }
         }
-    }
-    else {
-        Write-Host "WinGet is up to date, proceeding with DSC configuration"
     }
 }
 
