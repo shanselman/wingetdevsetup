@@ -23,6 +23,10 @@ $mainFunction = {
         $dscDevUri = $dscUri + $dscDev + $cacheBust
 
         Write-Host "Start: Scott Hanselman Dev Machine Setup"
+        winget configure --enable
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "winget configure --enable returned exit code $LASTEXITCODE. Proceeding anyway..."
+        }
         winget configuration -f $dscDevUri
         Write-Host "Done: Scott Hanselman Dev Machine Setup"
         
