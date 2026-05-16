@@ -43,6 +43,12 @@ $repos = @(
     "shanselman/LLMStudyGuide"
     "shanselman/babysmashwebsite"
     "shanselman/babysmash"
+    "shanselman/TinyToolTown"
+    "shanselman/PeekDesktop"
+    "shanselman/cert-inspector"
+    "shanselman/Toasty"
+    "shanselman/winget-tui"
+    "shanselman/MaximizeToVirtualDesktop"
 )
 
 foreach ($repo in $repos) {
