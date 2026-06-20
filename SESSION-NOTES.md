@@ -9,6 +9,7 @@ Built a complete Windows dev machine setup using WinGet DSC (Desired State Confi
 - `hanselman.dev.dsc.yml` - Main DSC configuration file
 - `boot.ps1` - Bootstrap script (runs DSC from URL with cache-busting)
 - `clone-repos.ps1` - Clones repos and sets up Nightscout URL from private gist
+- `clone-skills.ps1` - Clones/updates the Copilot CLI skills that are standalone Git repos into `~\.copilot\skills`
 - `Microsoft.PowerShell_profile.ps1` - PowerShell 7 profile
 - `hanselman.omp.json` - Oh My Posh theme configuration
 - `.vsconfig` - Visual Studio workloads/components
@@ -22,6 +23,7 @@ Then after:
 ```powershell
 gh auth login
 .\clone-repos.ps1
+.\clone-skills.ps1
 ```
 
 ## What's Installed
@@ -212,6 +214,17 @@ The theme template uses `$env:OSTENSIBLY_NIGHTSCOUT_URL` as a **placeholder** th
 - babysmashwebsite
 - babysmash
 
+## Copilot Skills List (clone-skills.ps1)
+Standalone-repo skills cloned into `~\.copilot\skills` (local folder name -> repo):
+- hanselman-code-review -> shanselman/hanselman-code-review-skill
+- loop -> shanselman/loop-cli
+- nightscout-cgm -> shanselman/nightscout-cgm-skill
+- ttt-triage -> shanselman/ttt-triage-skill
+- weekly-snapshot-skill -> shanselman/weekly-snapshot-skill
+- windows-terminal -> shanselman/windows-terminal-copilot-skill
+
+Bundled skills (docx, pptx, xlsx, etc.) ship with Copilot / other apps and are intentionally NOT cloned.
+
 ## Apps NOT in WinGet (removed or noted)
 - Toad - Linux only, removed from setup
 - Gemini CLI - installed via npm instead
@@ -221,7 +234,8 @@ The theme template uses `$env:OSTENSIBLY_NIGHTSCOUT_URL` as a **placeholder** th
 2. DSC installs all packages, configures Windows
 3. User runs `gh auth login`
 4. User runs `.\clone-repos.ps1` to clone repos and set Nightscout URL env var
-5. Profile loads on next PowerShell launch with Oh My Posh + Nightscout data
+5. User runs `.\clone-skills.ps1` to clone/update Copilot CLI skill repos
+6. Profile loads on next PowerShell launch with Oh My Posh + Nightscout data
 
 ## Key Learnings
 1. DSC runs in Windows PowerShell 5.1 context even when installing PowerShell 7

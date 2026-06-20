@@ -36,6 +36,7 @@ $mainFunction = {
         Write-Host "========================================" -ForegroundColor Cyan
         Write-Host "1. Run: gh auth login" -ForegroundColor Yellow
         Write-Host "2. Then run: .\clone-repos.ps1" -ForegroundColor Yellow
+        Write-Host "3. Then run: .\clone-skills.ps1  (Copilot CLI skills)" -ForegroundColor Yellow
         Write-Host "========================================" -ForegroundColor Cyan
     }
 }
