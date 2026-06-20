@@ -4,12 +4,18 @@ Scott Hanselman's complete Windows dev machine setup. One script installs everyt
 
 ## Quick Start
 
-```powershell
-# 1. Run the bootstrap (installs WinGet, runs DSC config)
-irm https://raw.githubusercontent.com/shanselman/wingetdevsetup/master/boot.ps1 | iex
+Since this repo is private, you'll need to authenticate first, then clone it locally:
 
-# 2. Authenticate to GitHub
+```powershell
+# 1. Install GitHub CLI (if not already installed) and authenticate
+winget install GitHub.cli
 gh auth login
+gh auth setup-git
+
+# 2. Clone this repo and run the bootstrap
+gh repo clone shanselman/wingetdevsetup
+cd wingetdevsetup
+.\boot.ps1
 
 # 3. Clone your repos
 .\clone-repos.ps1
