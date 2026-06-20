@@ -10,6 +10,8 @@ Built a complete Windows dev machine setup using WinGet DSC (Desired State Confi
 - `boot.ps1` - Bootstrap script (runs DSC from URL with cache-busting)
 - `clone-repos.ps1` - Clones repos and sets up Nightscout URL from private gist
 - `clone-skills.ps1` - Clones/updates the Copilot CLI skills that are standalone Git repos into `~\.copilot\skills`
+- `register-skill.ps1` - Turns a local skill folder into its own GitHub repo and adds it to the manifest
+- `skills-manifest.json` - Source-of-truth map of local skill folder name -> GitHub repo (read by clone-skills.ps1)
 - `Microsoft.PowerShell_profile.ps1` - PowerShell 7 profile
 - `hanselman.omp.json` - Oh My Posh theme configuration
 - `.vsconfig` - Visual Studio workloads/components
@@ -224,6 +226,17 @@ Standalone-repo skills cloned into `~\.copilot\skills` (local folder name -> rep
 - windows-terminal -> shanselman/windows-terminal-copilot-skill
 
 Bundled skills (docx, pptx, xlsx, etc.) ship with Copilot / other apps and are intentionally NOT cloned.
+
+### Adding a new skill (register-skill.ps1)
+To turn a local skill folder into its own repo and start tracking it:
+```powershell
+.\register-skill.ps1 my-new-skill            # public repo named my-new-skill
+.\register-skill.ps1 my-new-skill -Private   # private repo
+.\register-skill.ps1 my-new-skill -RepoName my-new-skill-skill  # custom repo name
+```
+This git-inits + commits the skill, creates/pushes the GitHub repo, appends it to
+`skills-manifest.json`, and commits that manifest change back to this repo. The skill
+list lives in `skills-manifest.json`; `clone-skills.ps1` reads it (no hardcoded list).
 
 ## Apps NOT in WinGet (removed or noted)
 - Toad - Linux only, removed from setup

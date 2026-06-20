@@ -22,15 +22,19 @@ if (-not (Test-Path $skillsRoot)) {
 
 Write-Host "Authenticated to GitHub. Syncing skills to $skillsRoot..." -ForegroundColor Green
 
-# Map of local skill folder name -> GitHub repo.
+# Map of local skill folder name -> GitHub repo, loaded from skills-manifest.json.
 # The local folder name is what Copilot uses, and sometimes differs from the repo name.
-$skills = [ordered]@{
-    "hanselman-code-review" = "shanselman/hanselman-code-review-skill"
-    "loop"                  = "shanselman/loop-cli"
-    "nightscout-cgm"        = "shanselman/nightscout-cgm-skill"
-    "ttt-triage"            = "shanselman/ttt-triage-skill"
-    "weekly-snapshot-skill" = "shanselman/weekly-snapshot-skill"
-    "windows-terminal"      = "shanselman/windows-terminal-copilot-skill"
+# (Use register-skill.ps1 to add new skills to the manifest.)
+$manifestPath = Join-Path $PSScriptRoot "skills-manifest.json"
+if (-not (Test-Path $manifestPath)) {
+    Write-Host "ERROR: Manifest not found: $manifestPath" -ForegroundColor Red
+    exit 1
+}
+
+$skills = [ordered]@{}
+$json = Get-Content $manifestPath -Raw | ConvertFrom-Json
+foreach ($prop in $json.PSObject.Properties) {
+    $skills[$prop.Name] = $prop.Value
 }
 
 foreach ($skill in $skills.GetEnumerator()) {

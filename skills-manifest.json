@@ -1,0 +1,8 @@
+{
+  "hanselman-code-review": "shanselman/hanselman-code-review-skill",
+  "loop": "shanselman/loop-cli",
+  "nightscout-cgm": "shanselman/nightscout-cgm-skill",
+  "ttt-triage": "shanselman/ttt-triage-skill",
+  "weekly-snapshot-skill": "shanselman/weekly-snapshot-skill",
+  "windows-terminal": "shanselman/windows-terminal-copilot-skill"
+}
