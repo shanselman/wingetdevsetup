@@ -1,4 +1,5 @@
 {
+  "boss-status-report": "shanselman/boss-status-report",
   "hanselman-code-review": "shanselman/hanselman-code-review-skill",
   "loop": "shanselman/loop-cli",
   "nightscout-cgm": "shanselman/nightscout-cgm-skill",
