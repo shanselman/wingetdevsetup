@@ -42,17 +42,6 @@ properties:
         id: GitHub.cli
         source: winget
 
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      id: githubcopilot
-      dependsOn:
-        - githubcli
-      directives:
-        description: Install GitHub Copilot CLI
-        allowPrerelease: true
-      settings:
-        id: GitHub.copilot
-        source: winget
-
 # Editors
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: vscode
@@ -332,6 +321,17 @@ properties:
           }
 
 # AI and Dev Tools
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: githubcopilot
+      dependsOn:
+        - githubcli
+      directives:
+        description: Install GitHub Copilot CLI
+        allowPrerelease: true
+      settings:
+        id: GitHub.copilot
+        source: winget
+
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: foundrylocal
       directives:
