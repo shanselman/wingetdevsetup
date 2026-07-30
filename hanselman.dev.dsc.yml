@@ -226,6 +226,27 @@ properties:
           New-Item -Path 'D:\github' -ItemType Directory -Force
 
 # Windows Settings
+    - resource: PSDscResources/Script
+      id: HighPerformancePowerPlan
+      directives:
+        description: Set power plan to High Performance
+        allowPrerelease: true
+      settings:
+        GetScript: |
+          $highPerfGuid = '8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c'
+          $activePlan = powercfg /getactivescheme
+          @{ Result = ($activePlan -match $highPerfGuid) }
+        TestScript: |
+          $highPerfGuid = '8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c'
+          $activePlan = powercfg /getactivescheme
+          return $activePlan -match $highPerfGuid
+        SetScript: |
+          $highPerfGuid = '8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c'
+          powercfg /setactive $highPerfGuid
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to set High Performance power plan. Exit code: $LASTEXITCODE"
+          }
+
     - resource: Microsoft.Windows.Developer/WindowsExplorer
       directives:
         description: Show file extensions in Explorer
